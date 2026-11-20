@@ -8,4 +8,34 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.15" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ClientPackageFiles Include="ClientApp/package.json;ClientApp/package-lock.json" />
+    <ClientSources Include="@(ClientPackageFiles);ClientApp/tsconfig.json;ClientApp/vite.config.ts;ClientApp/src/**/*" />
+    <ClientAssets Include="wwwroot/terminal/terminal.js;wwwroot/terminal/terminal.css" />
+    <UpToDateCheckInput Include="@(ClientSources)" Set="Client" />
+    <UpToDateCheckOutput Include="@(ClientAssets)" Set="Client" />
+  </ItemGroup>
+
+  <Target Name="RestoreClientDependencies"
+          Inputs="@(ClientPackageFiles)"
+          Outputs="ClientApp/node_modules/.package-lock.json">
+    <Exec Command="npm ci" WorkingDirectory="$(MSBuildProjectDirectory)/ClientApp" />
+  </Target>
+
+  <Target Name="BuildClient"
+          DependsOnTargets="RestoreClientDependencies"
+          Inputs="@(ClientSources);ClientApp/node_modules/.package-lock.json"
+          Outputs="@(ClientAssets)">
+    <Exec Command="npm run build" WorkingDirectory="$(MSBuildProjectDirectory)/ClientApp" />
+  </Target>
+
+  <Target Name="RegisterClientAssets"
+          BeforeTargets="ResolveProjectStaticWebAssets"
+          DependsOnTargets="BuildClient"
+          Condition="'$(DesignTimeBuild)' != 'true'">
+    <ItemGroup>
+      <Content Include="@(ClientAssets)" Exclude="@(Content)" CopyToPublishDirectory="PreserveNewest" />
+    </ItemGroup>
+  </Target>
 </Project>
