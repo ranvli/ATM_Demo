@@ -1,0 +1,6 @@
+[Bb]in/
+[Oo]bj/
+.vs/
+*.user
+node_modules/
+src/AtmDemo.Web/wwwroot/terminal/
