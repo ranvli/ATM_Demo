@@ -21,3 +21,21 @@ Open [http://localhost:5155](http://localhost:5155) to see the terminal. The acc
 - **Api/V1** defines the HTTP contract and supplies the initial account balances.
 
 Run the frontend build again after editing the Vue, TypeScript, or CSS sources.
+
+## CI and Azure deployment
+
+GitHub Actions builds the frontend and backend on pushes and pull requests targeting `main`. The workflow runs the .NET tests defined in the solution.
+
+The optional manual deployment uses a short-lived Azure access token. Set up an Azure App Service for Linux with the .NET 10 runtime and give a user-assigned managed identity the **Website Contributor** role scoped to that app.
+
+Add a federated credential to the identity with these exact values for this repository.
+
+| Setting | Value |
+| --- | --- |
+| Issuer | `https://token.actions.githubusercontent.com` |
+| Audience | `api://AzureADTokenExchange` |
+| Subject | `repo:ranvli@12191461/ATM_Demo@1465960254:ref:refs/heads/main` |
+
+In **Settings → Secrets and variables → Actions → Variables**, add `AZURE_CLIENT_ID` for the identity, `AZURE_TENANT_ID`, `AZURE_SUBSCRIPTION_ID`, and `AZURE_WEBAPP_NAME`.
+
+In **Actions → ATM CI and Azure deploy**, select **Run workflow** on `main` and check **Deploy to Azure App Service**.

@@ -1,0 +1,89 @@
+name: ATM CI and Azure deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      deploy_to_azure:
+        description: Deploy to Azure App Service
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build and test
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: src/AtmDemo.Web/ClientApp/package-lock.json
+
+      - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Build Vue and TypeScript
+        working-directory: src/AtmDemo.Web/ClientApp
+        run: |
+          npm ci
+          npm run build
+
+      - name: Build .NET solution
+        run: dotnet build AtmDemo.slnx --configuration Release
+
+      - name: Run .NET tests
+        run: dotnet test AtmDemo.slnx --configuration Release --no-build
+
+      - name: Publish web app
+        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy_to_azure
+        run: dotnet publish src/AtmDemo.Web/AtmDemo.Web.csproj --configuration Release --no-build --output "$RUNNER_TEMP/atm-publish"
+
+      - name: Upload the published app
+        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy_to_azure
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: atm-web
+          path: ${{ runner.temp }}/atm-publish
+          if-no-files-found: error
+          retention-days: 7
+
+  deploy:
+    name: Deploy to Azure App Service
+    needs: build
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy_to_azure
+    runs-on: ubuntu-24.04
+    permissions:
+      id-token: write
+    concurrency:
+      group: atm-demo-azure
+      cancel-in-progress: false
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: atm-web
+          path: ${{ runner.temp }}/atm-publish
+
+      - name: Sign in to Azure using OIDC
+        uses: azure/login@a641126d1b8aa4d1fa005f4f92df94a3a4c4c906 # v3.1.0
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy published app
+        uses: azure/webapps-deploy@02a81bead70021f5284939794bcec79c271ab383 # v3.0.8
+        with:
+          app-name: ${{ vars.AZURE_WEBAPP_NAME }}
+          package: ${{ runner.temp }}/atm-publish
