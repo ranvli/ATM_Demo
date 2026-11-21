@@ -114,6 +114,7 @@ async function confirmOperation(): Promise<void> {
       operationError.value = error.message;
       await refreshOverview();
     } else {
+      // Keep the same operation ID in case the server applied the movement before the response was lost.
       awaitingConfirmation.value = true;
       operationError.value = 'The result is unknown. Retry to check the same operation.';
     }

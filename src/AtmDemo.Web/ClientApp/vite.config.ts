@@ -4,6 +4,7 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   plugins: [vue()],
   define: {
+    // Replace Node's environment check at build time so the bundle runs in the browser.
     'process.env.NODE_ENV': JSON.stringify('production'),
   },
   build: {

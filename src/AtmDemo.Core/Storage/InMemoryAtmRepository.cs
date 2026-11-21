@@ -24,6 +24,7 @@ public sealed class InMemoryAtmRepository : IAtmRepository
 
     public TResult Update<TResult>(Func<AtmState, (AtmState NextState, TResult Result)> change)
     {
+        // Hold the lock through the balance check and commit so withdrawals cannot spend the same funds.
         lock (gate)
         {
             var (nextState, result) = change(state);

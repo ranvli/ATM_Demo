@@ -4,7 +4,7 @@ namespace AtmDemo.Core;
 
 public sealed class AtmService(IAtmRepository repository, TimeProvider clock)
 {
-    // A decimal(15,2) range preserves cent precision in the JavaScript number contract.
+    // Keep amounts small enough for JavaScript to distinguish every cent.
     private const decimal MaximumBalance = 9_999_999_999_999.99m;
 
     public Account[] GetAccounts() => OrderedAccounts(repository.Read());
@@ -59,6 +59,7 @@ public sealed class AtmService(IAtmRepository repository, TimeProvider clock)
 
     private (AtmState NextState, AtmResult Result) Apply(AtmState state, AtmCommand command)
     {
+        // Look up retries before checking funds. The balance may have changed since the first request.
         var previous = state.Transactions.Find(transaction => transaction.Operation.OperationId == command.OperationId);
         if (previous is not null)
         {

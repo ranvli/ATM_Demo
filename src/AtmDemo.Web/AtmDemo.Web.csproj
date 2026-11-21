@@ -31,6 +31,7 @@
     <Exec Command="npm run build" WorkingDirectory="$(MSBuildProjectDirectory)/ClientApp" />
   </Target>
 
+  <!-- Build and register the Vue files before ASP.NET Core scans static assets. -->
   <Target Name="RegisterClientAssets"
           BeforeTargets="ResolveProjectStaticWebAssets"
           DependsOnTargets="BuildClient"
