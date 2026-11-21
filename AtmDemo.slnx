@@ -1,3 +1,5 @@
 <Solution>
   <Project Path="src/AtmDemo.Web/AtmDemo.Web.csproj" />
+  <Project Path="src/AtmDemo.Core/AtmDemo.Core.csproj" />
+  <Project Path="tests/AtmDemo.Tests/AtmDemo.Tests.csproj" />
 </Solution>

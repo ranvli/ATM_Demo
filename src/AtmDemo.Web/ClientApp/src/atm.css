@@ -12,7 +12,7 @@ body {
 }
 
 #atm-terminal {
-  width: min(100%, 38rem);
+  width: min(100%, 48rem);
 }
 
 .terminal {
@@ -44,4 +44,42 @@ body {
 .terminal-account dd {
   color: #b6f4d9;
   font-variant-numeric: tabular-nums;
+}
+
+.terminal-menu {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  border-top: 1px solid rgb(237 247 245 / 20%);
+  padding-top: 1rem;
+}
+
+.terminal-menu > button {
+  flex: 1 1 auto;
+}
+
+.terminal-entry {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(9rem, 1fr);
+  align-items: start;
+  gap: clamp(0.75rem, 4vw, 1.75rem);
+}
+
+.terminal-keypad {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.4rem;
+  padding: 0.6rem;
+  border-radius: 0.6rem;
+  background: #172126;
+}
+
+.terminal-keypad > button {
+  padding-inline: 0.25rem;
+}
+
+@media (max-width: 36rem) {
+  .terminal-entry {
+    grid-template-columns: 1fr;
+  }
 }

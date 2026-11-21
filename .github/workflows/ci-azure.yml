@@ -43,8 +43,8 @@ jobs:
       - name: Build .NET solution
         run: dotnet build AtmDemo.slnx --configuration Release
 
-      - name: Run .NET tests
-        run: dotnet test AtmDemo.slnx --configuration Release --no-build
+      - name: Run MSTest unit tests
+        run: dotnet test AtmDemo.slnx --configuration Release --no-build --logger "console;verbosity=normal"
 
       - name: Publish web app
         if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.deploy_to_azure
