@@ -13,7 +13,7 @@
   <ItemGroup>
     <ClientPackageFiles Include="ClientApp/package.json;ClientApp/package-lock.json" />
     <ClientSources Include="@(ClientPackageFiles);ClientApp/tsconfig.json;ClientApp/vite.config.ts;ClientApp/src/**/*" />
-    <ClientAssets Include="wwwroot/terminal/terminal.js;wwwroot/terminal/terminal.css" />
+    <ClientAssets Include="wwwroot/terminal/terminal.js;wwwroot/terminal/terminal.css;wwwroot/terminal/terminal.js.map" />
     <UpToDateCheckInput Include="@(ClientSources)" Set="Client" />
     <UpToDateCheckOutput Include="@(ClientAssets)" Set="Client" />
   </ItemGroup>

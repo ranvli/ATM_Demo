@@ -10,6 +10,7 @@ export default defineConfig({
   build: {
     outDir: '../wwwroot/terminal',
     emptyOutDir: true,
+    sourcemap: true,
     lib: {
       entry: 'src/main.ts',
       formats: ['es'],

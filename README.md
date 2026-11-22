@@ -26,6 +26,15 @@ Open [http://localhost:5155](http://localhost:5155) to see the terminal. The acc
 3. Transfer $100.00 from Checking to Savings. The balances should be $425.00 and $340.00, respectively.
 4. Open **History** to see the three movements. Try withdrawing more than the available balance to see the rejection.
 
+## Read and debug the frontend
+
+- [AtmTerminal.vue](src/AtmDemo.Web/ClientApp/src/AtmTerminal.vue) contains the terminal markup.
+- [AtmTerminal.ts](src/AtmDemo.Web/ClientApp/src/AtmTerminal.ts) handles user input, confirmation and retries.
+- [atmApi.ts](src/AtmDemo.Web/ClientApp/src/atmApi.ts) contains the typed HTTP client.
+- [atm.css](src/AtmDemo.Web/ClientApp/src/atm.css) contains the terminal styles.
+
+Razor loads the JavaScript and stylesheet as separate files. Vite generates those files and a JavaScript source map during the build. With the app running, open **Sources** in your browser developer tools and open `AtmTerminal.ts` to set a breakpoint in the original TypeScript.
+
 ## Architecture
 
 - **AtmDemo.Web** hosts the Razor page, Vue components and `/api/v1` in one ASP.NET Core process. The Vue component calls a typed HTTP client. The endpoints translate requests and return standard problem details for rejections.
