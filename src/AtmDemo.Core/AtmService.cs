@@ -7,16 +7,25 @@ public sealed class AtmService(IAtmRepository repository, TimeProvider clock)
     // Keep amounts small enough for JavaScript to distinguish every cent.
     private const decimal MaximumBalance = 9_999_999_999_999.99m;
 
+    /// <summary>Returns the current accounts, ordered by account ID.</summary>
     public Account[] GetAccounts() => OrderedAccounts(repository.Read());
 
+    /// <summary>Returns completed movements in reverse commit order.</summary>
     public ImmutableList<Transaction> GetTransactions() => repository.Read().Transactions;
 
+    /// <summary>Returns balances and transaction history from the same snapshot.</summary>
     public AtmOverview GetOverview()
     {
         var state = repository.Read();
         return new(OrderedAccounts(state), state.Transactions);
     }
 
+    /// <summary>Validates a movement and commits its balance and history changes together.</summary>
+    /// <remarks>
+    /// Repeating a completed command returns its original receipt. A different command with the
+    /// same operation ID returns a conflict if it passes input validation.
+    /// </remarks>
+    /// <returns>The receipt for a completed movement or the reason it was rejected.</returns>
     public AtmResult Execute(AtmCommand command)
     {
         if (Validate(command) is { } error)

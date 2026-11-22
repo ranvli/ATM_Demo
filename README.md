@@ -33,7 +33,7 @@ Open [http://localhost:5155](http://localhost:5155) to see the terminal. The acc
 - [atmApi.ts](src/AtmDemo.Web/ClientApp/src/atmApi.ts) contains the typed HTTP client.
 - [atm.css](src/AtmDemo.Web/ClientApp/src/atm.css) contains the terminal styles.
 
-Razor loads the JavaScript and stylesheet as separate files. Vite generates those files and a JavaScript source map during the build. With the app running, open **Sources** in your browser developer tools and open `AtmTerminal.ts` to set a breakpoint in the original TypeScript.
+Razor loads the JavaScript and stylesheet as separate files. Vite writes readable `terminal.css` and `terminal.js` files under `src/AtmDemo.Web/wwwroot/terminal/`. With the app running, open **Sources** in your browser developer tools and open `AtmTerminal.ts` to set a breakpoint in the original TypeScript.
 
 ## Architecture
 

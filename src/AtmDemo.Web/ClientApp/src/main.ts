@@ -1,4 +1,4 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/css/bootstrap.css';
 import './atm.css';
 import { createApp } from 'vue';
 import AtmTerminal from './AtmTerminal.vue';

@@ -14,6 +14,7 @@ public sealed class InMemoryAtmRepository : IAtmRepository
         }),
         ImmutableList<Transaction>.Empty);
 
+    /// <inheritdoc />
     public AtmState Read()
     {
         lock (gate)
@@ -22,6 +23,7 @@ public sealed class InMemoryAtmRepository : IAtmRepository
         }
     }
 
+    /// <inheritdoc />
     public TResult Update<TResult>(Func<AtmState, (AtmState NextState, TResult Result)> change)
     {
         // Hold the lock through the balance check and commit so withdrawals cannot spend the same funds.

@@ -45,6 +45,7 @@ public sealed class AtmServiceTests
     }
 
     [TestMethod]
+    [Description("The transfer keeps the combined balance at $750 and records one receipt.")]
     public void TransferPublishesBothBalancesAndHistoryTogether()
     {
         var result = atm.Execute(new(Guid.NewGuid(), OperationKind.Transfer, 100.25m, "checking", "savings"));
@@ -58,6 +59,7 @@ public sealed class AtmServiceTests
     }
 
     [TestMethod]
+    [Description("An overdrawn transfer leaves the original snapshot in place.")]
     public void InsufficientFundsLeavesBothAccountsAndHistoryUnchanged()
     {
         var before = repository.Read();
@@ -69,6 +71,7 @@ public sealed class AtmServiceTests
     }
 
     [TestMethod]
+    [Description("Zero, negative, fractional-cent and out-of-range amounts are rejected before any write.")]
     [DataRow("0")]
     [DataRow("-0.01")]
     [DataRow("10.001")]
@@ -112,6 +115,7 @@ public sealed class AtmServiceTests
     }
 
     [TestMethod]
+    [Description("A retry returns the original receipt and leaves exactly one movement in history.")]
     public void RepeatingTheSameOperationReturnsItsOriginalTransaction()
     {
         var command = new AtmCommand(Guid.NewGuid(), OperationKind.Transfer, 25m, "checking", "savings");
@@ -127,6 +131,7 @@ public sealed class AtmServiceTests
     }
 
     [TestMethod]
+    [Description("Changing the amount under an existing operation ID leaves the original deposit in place.")]
     public void ReusingTheIdWithDifferentDetailsIsRejected()
     {
         var command = new AtmCommand(Guid.NewGuid(), OperationKind.Deposit, 10m, DestinationAccountId: "checking");
@@ -140,6 +145,7 @@ public sealed class AtmServiceTests
     }
 
     [TestMethod]
+    [Description("Two $400 withdrawals compete for $500. Only one commits and $100 remains.")]
     public async Task ConcurrentWithdrawalsCannotSpendTheSameFunds()
     {
         var start = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -161,6 +167,7 @@ public sealed class AtmServiceTests
     }
 
     [TestMethod]
+    [Description("An exception while creating the receipt leaves the previous snapshot in place.")]
     public void ExceptionBeforeCommitDoesNotPublishPartialState()
     {
         var before = repository.Read();

@@ -10,6 +10,9 @@ export default defineConfig({
   build: {
     outDir: '../wwwroot/terminal',
     emptyOutDir: true,
+    // Keep the generated files readable for local inspection.
+    minify: false,
+    cssMinify: false,
     sourcemap: true,
     lib: {
       entry: 'src/main.ts',
